@@ -35,8 +35,8 @@ function copyBoard(board) {
 //     return mat
 // }
 
-// function playSound(sound) {
-//     var sound = new Audio(`${sound}.mp3`);
-//     sound.play();
-// }
+function playSound(sound) {
+    var sound = new Audio(`${sound}.mp3`);
+    sound.play();
+}
 

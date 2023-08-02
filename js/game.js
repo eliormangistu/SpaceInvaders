@@ -30,7 +30,7 @@ function inIt() {
     document.querySelector('p1').classList.add('hidden')
 }
 function startGame() {
-
+    playSound('ארתור - שיר פתיחה')
     gGame.isOn = true;
     gIsBlowNegs = false;
 
