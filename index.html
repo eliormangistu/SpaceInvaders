@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Space Invaders</title>
+</head>
+
+<body onkeyup="onHandleKey(event)" onload="inIt()">
+    <h1>Space Invaders</h1>
+    <p>score: <span>0</span></p>
+    <p1>you have <span></span> super attack</p1>
+    <button onclick="startGame()">START</button>
+    <div class="win">Winner!</div>
+    <div class="modal">
+        <h2>Hi Space Invader!</h2>
+        <h3>here are the game rules: </h3>
+        <ul>
+            <li>Press Arrow left and Arrow right to move</li>
+            <br>
+            <li>Press 'n' for booming neighbors</li>
+            <br>
+            <li>Press 'x' for faster laser</li>
+        </ul>
+        <h4>Have fun!</h4>
+        <h5>good luck 👽</h5>
+    </div>
+    <table class="board">
+    </table>
+    <script src="js/util.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/hero.js"></script>
+    <script src="js/aliens.js"></script>
+</body>
+
+</html>
