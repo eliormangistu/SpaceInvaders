@@ -49,7 +49,7 @@ function alienRocks(pos) {
         return
     }
     var alienPos = { i: pos.i + 1, j: pos.j }
-    console.log(gBoard[alienPos.i][alienPos.j]);
+    //console.log(gBoard[alienPos.i][alienPos.j]);
     if (gBoard[alienPos.i][alienPos.j].gameObject === HERO) {
         gameOver()
         updateCell(alienPos, '')

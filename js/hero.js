@@ -114,7 +114,7 @@ function shootSuperAttack(pos) {
     if (gSuperAttackCount === 0) return
     gSuperAttackCount--
     gSuperAttackInterval = setInterval(superAttack, 800, pos)
-    document.querySelector('p1 span').innerHTML = gSuperAttackCount
+   // document.querySelector('p1 span').innerHTML = gSuperAttackCount
 }
 function superAttack(pos) {
     if (pos.i <= 0) {

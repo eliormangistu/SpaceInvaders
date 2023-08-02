@@ -24,13 +24,14 @@ const gGame = {
 }
 
 function inIt() {
+    playSound('ארתור - שיר פתיחה')
     document.querySelector('.modal').classList.remove('hidden')
     document.querySelector('button').classList.remove('hidden')
     document.querySelector('.win').classList.add('hidden')
-    document.querySelector('p1').classList.add('hidden')
+    //document.querySelector('p1').classList.add('hidden')
 }
 function startGame() {
-    playSound('ארתור - שיר פתיחה')
+
     gGame.isOn = true;
     gIsBlowNegs = false;
 
@@ -46,9 +47,10 @@ function startGame() {
 
     document.querySelector('.modal').classList.add('hidden')
     document.querySelector('button').classList.add('hidden')
-    document.querySelector('p1').classList.remove('hidden')
-    document.querySelector('p1 span').innerText = gSuperAttackCount
-
+    //document.querySelector('p1').classList.remove('hidden')
+    //document.querySelector('p1 span').innerText = gSuperAttackCount
+    document.querySelector('.win').classList.add('hidden')
+    document.querySelector('button').innerText = 'Restart'
     gAlienPosInterval = setInterval(getAlienPos, 10000)
 
 }
@@ -111,7 +113,7 @@ function gameOver() {
     gGame.isOn = false
     document.querySelector('button').innerText = 'Restart'
     document.querySelector('button').classList.remove('hidden')
-    document.querySelector('p1').classList.add('hidden')
+    //document.querySelector('p1').classList.add('hidden')
 }
 function isWin() {
     gGame.isOn = false
