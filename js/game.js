@@ -1,12 +1,13 @@
 'use strict'
 
 const BOARD_SIZE = 14
-// const ALIEN_ROW_LENGTH = 8
-// const ALIEN_ROW_COUNT = 3
+const ALIEN_ROW_LENGTH = 8
+const ALIEN_ROW_COUNT = 3
 const LASER_SPEED = 80
+const SUPER_ATTACK_SPEED = 30
 const ALIEN = '👽'
 const LASER = '🔥'
-const HERO = '♆'
+const HERO = '👸🏾'
 const SUPER_ATTACK = '⚡'
 const SPACE_CANDY = '🍕'
 const ROCK = '🌑'
@@ -20,18 +21,20 @@ var gAlienPosInterval;
 const gGame = {
     isOn: false,
     score: 0,
-    alienCount: 24
+    alienCount:24
 }
+var sound = new Audio('ארתור - שיר פתיחה.mp3')
 
 function inIt() {
-    playSound('ארתור - שיר פתיחה')
+
     document.querySelector('.modal').classList.remove('hidden')
     document.querySelector('button').classList.remove('hidden')
     document.querySelector('.win').classList.add('hidden')
     //document.querySelector('p1').classList.add('hidden')
+
 }
 function startGame() {
-
+    //sound.play()
     gGame.isOn = true;
     gIsBlowNegs = false;
 
@@ -43,15 +46,18 @@ function startGame() {
     createAliens(gBoard)
     createHero(gBoard)
     renderBoard(gBoard)
-    console.log(gAliens);
+    console.log(gGame.alienCount);
+    //console.log(gAliens);
+    //gAliensInterval =  setInterval(moveAliens, 1000)
 
     document.querySelector('.modal').classList.add('hidden')
     document.querySelector('button').classList.add('hidden')
     //document.querySelector('p1').classList.remove('hidden')
-    //document.querySelector('p1 span').innerText = gSuperAttackCount
+    document.querySelector('p span').innerText = 0
     document.querySelector('.win').classList.add('hidden')
-    document.querySelector('button').innerText = 'Restart'
-    gAlienPosInterval = setInterval(getAlienPos, 10000)
+    //document.querySelector('button').innerText = 'Restart'
+    gAlienPosInterval = setInterval(getAlienPos, 2000)
+    moveAliens()
 
 }
 
@@ -91,11 +97,11 @@ function renderBoard(board) {
     }
     const elBoard = document.querySelector('.board')
     elBoard.innerHTML = strHTML
-    console.table(board)
+    //console.table(board)
 }
 
 function updateCell(pos, gameObject = null) {
-    console.log(pos, gameObject);
+    // console.log(pos, gameObject);
     gBoard[pos.i][pos.j].gameObject = gameObject
     console.log(gBoard[pos.i][pos.j]);
     var elCell = getElCell(pos)
@@ -110,15 +116,16 @@ function updateScore(diff) {
 
 }
 function gameOver() {
+    sound.pause()
     gGame.isOn = false
     document.querySelector('button').innerText = 'Restart'
     document.querySelector('button').classList.remove('hidden')
     //document.querySelector('p1').classList.add('hidden')
 }
 function isWin() {
+    sound.pause()
     gGame.isOn = false
     document.querySelector('.win').classList.remove('hidden')
     document.querySelector('button').innerText = 'Restart'
     document.querySelector('button').classList.remove('hidden')
-
 }

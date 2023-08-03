@@ -70,13 +70,14 @@ function onHandleKey(event) {
 }
 
 function blinkLazer(pos) {
+    // if (!gHero.isShoot) {
     if (pos.i <= 2) {
         clearInterval(gShootInterval)
         return
     }
 
     var laserPos = { i: pos.i - 1, j: pos.j }
-    console.log(laserPos);
+    //console.log(laserPos);
 
     if (gBoard[laserPos.i][laserPos.j].gameObject === ALIEN) {
         if (gIsBlowNegs) {
@@ -89,32 +90,34 @@ function blinkLazer(pos) {
         }
         updateScore(10)
         updateCell(laserPos)
-        console.log(laserPos);
+        //console.log(laserPos);
         clearInterval(gShootInterval)
         return
     }
     updateCell(laserPos, LASER)
-    console.log(pos);
+    //console.log(pos);
 
     setTimeout(() => {
-        updateCell(laserPos, '')
-        console.log(laserPos);
+        updateCell(laserPos)
+        //console.log(laserPos);
     }, LASER_SPEED)
 
     pos.i--
-
 }
-
+//}
 function shoot(pos) {
-    gShootInterval = setInterval(blinkLazer, 1500, pos)
-
+    gShootInterval = setInterval(blinkLazer, 100, pos)
+}
+function playSound(sound) {
+    var sound = new Audio(`${sound}.mp3`);
+    sound.play();
 }
 function shootSuperAttack(pos) {
-
+    // console.log(gHero.isShoot);
     if (gSuperAttackCount === 0) return
     gSuperAttackCount--
-    gSuperAttackInterval = setInterval(superAttack, 800, pos)
-   // document.querySelector('p1 span').innerHTML = gSuperAttackCount
+    gSuperAttackInterval = setInterval(superAttack, 80, pos)
+    // document.querySelector('p1 span').innerHTML = gSuperAttackCount
 }
 function superAttack(pos) {
     if (pos.i <= 0) {
@@ -122,11 +125,22 @@ function superAttack(pos) {
         return
     }
     var laserPos = { i: pos.i - 1, j: pos.j }
+    if (gBoard[laserPos.i][laserPos.j].gameObject === ALIEN) {
+        gGame.alienCount--
+        if (gGame.alienCount === 0) {
+            isWin()
+            return
+        }
+        updateScore(10)
+        updateCell(laserPos)
+        clearInterval(gSuperAttackInterval)
+        return
+    }
     updateCell(laserPos, SUPER_ATTACK)
     setTimeout(() => {
         updateCell(laserPos, '')
         //console.log(laserPos);
-    }, 100)
+    }, SUPER_ATTACK_SPEED)
     pos.i--
 }
 

@@ -23,6 +23,7 @@ function copyBoard(board) {
     return newBoard
 }
 
+
 // function createMat(ROWS, COLS) {
 //     var mat = []
 //     for (var i = 0; i < ROWS; i++) {
@@ -35,8 +36,8 @@ function copyBoard(board) {
 //     return mat
 // }
 
-function playSound(sound) {
-    var sound = new Audio(`${sound}.mp3`);
-    sound.play();
-}
+// function stopSound(sound) {
+//     var sound = new Audio(`${sound}.mp3`);
+//     sound.pause();
+// }
 
