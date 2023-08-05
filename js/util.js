@@ -13,31 +13,7 @@ function getRandomInt(min, max) {
 function getElCell(pos) {
     return document.querySelector(`[data-i='${pos.i}'][data-j='${pos.j}']`)
 }
-function copyBoard(board) {
-    var newBoard = []
-    for (var i = 0; i < board.length; i++) {
-        newBoard[i] = []
-        for (var j = 0; j < board[0].length; j++)
-            newBoard[i][j] = board[i][j]
-    }
-    return newBoard
+function playSound(sound) {
+    var sound = new Audio(`${sound}.mp3`);
+    sound.play();
 }
-
-
-// function createMat(ROWS, COLS) {
-//     var mat = []
-//     for (var i = 0; i < ROWS; i++) {
-//         var row = []
-//         for (var j = 0; j < COLS; j++) {
-//             row.push('')
-//         }
-//         mat.push(row)
-//     }
-//     return mat
-// }
-
-// function stopSound(sound) {
-//     var sound = new Audio(`${sound}.mp3`);
-//     sound.pause();
-// }
-

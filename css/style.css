@@ -20,6 +20,7 @@ h1 {
 table {
     margin-left: auto;
     margin-right: auto;
+    margin-top: 10px;
 }
 
 /* td {
@@ -52,7 +53,11 @@ button:hover {
 }
 
 p {
-   text-shadow: 20px 10px 10px blue;
+    text-shadow: 20px 10px 10px blue;
+}
+
+p1 {
+    text-shadow: 20px 10px 10px blue;
 }
 
 .win {

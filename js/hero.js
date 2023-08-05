@@ -1,9 +1,12 @@
 'use strict'
+const LASER_SPEED = 80
+
 var gShootInterval;
 var gSuperAttackInterval;
 
 var gIsBlowNegs;
-
+var gIsHeroShield;
+var gIsShoot = false
 var gSuperAttackCount;
 
 var gHero;
@@ -19,8 +22,9 @@ function createHero(board) {
     board[gHero.pos.i][gHero.pos.j].gameObject = HERO
 }
 function moveTo(i, j) {
-    console.log('move');
+
     if (!gGame.isOn) return
+
     var targetCell = gBoard[i][j]
     if (!targetCell) return
 
@@ -28,16 +32,23 @@ function moveTo(i, j) {
     const jAbsDiff = Math.abs(j - gHero.pos.j)
 
     if (jAbsDiff === 1 && iAbsDiff === 0) {
+        if (targetCell.gameObject === SPACE_CANDY) {
+            updateCell(gHero.pos, HERO)
+            updateScore(50)
+        }
 
-        updateCell(gHero.pos, '')
+        updateCell(gHero.pos)
 
         gHero.pos.i = i
         gHero.pos.j = j
 
         updateCell(gHero.pos, HERO)
 
+        var gHeroShield = (gIsHeroShield) ? HERO_SHIELD : HERO
+        updateCell(gHero.pos, gHeroShield)
     }
 }
+
 function onHandleKey(event) {
 
     const i = gHero.pos.i
@@ -46,104 +57,92 @@ function onHandleKey(event) {
     switch (event.key) {
         case 'ArrowLeft':
             moveTo(i, j - 1)
-            console.log('left');
             break
         case 'ArrowRight':
             moveTo(i, j + 1)
-            console.log('rigth');
             break
         case ' ':
             shoot({ i, j })
-            console.log('shoot!');
             break
         case 'n':
-            shoot({ i, j })
             gIsBlowNegs = true
-            console.log('blow negs');
+            shoot({ i, j })
             break
         case 'x':
             shootSuperAttack({ i, j })
-            console.log('super attacks');
             break;
+        case 'z':
+            getShield(gHero.pos)
+            break
     }
-
 }
 
 function blinkLazer(pos) {
-    // if (!gHero.isShoot) {
-    if (pos.i <= 2) {
+    if (!gIsShoot) return
+    if (pos.i <= 0) {
         clearInterval(gShootInterval)
         return
     }
-
     var laserPos = { i: pos.i - 1, j: pos.j }
-    //console.log(laserPos);
-
     if (gBoard[laserPos.i][laserPos.j].gameObject === ALIEN) {
         if (gIsBlowNegs) {
             blowUpNegs(laserPos)
+            gIsShoot = false
+            setTimeout(() => {
+                gIsShoot = true
+                gIsBlowNegs = false
+            }, 1000)
         }
-        gGame.alienCount--
-        if (gGame.alienCount === 0) {
-            isWin()
-            return
-        }
-        updateScore(10)
-        updateCell(laserPos)
-        //console.log(laserPos);
+        handleAlienHit(laserPos)
         clearInterval(gShootInterval)
+        return
+    } if (gBoard[laserPos.i][laserPos.j].gameObject === BUNKER) {
+        updateCell(laserPos, BUNKER)
         return
     }
     updateCell(laserPos, LASER)
-    //console.log(pos);
-
+    gIsShoot = false
     setTimeout(() => {
+        gIsShoot = true
         updateCell(laserPos)
-        //console.log(laserPos);
     }, LASER_SPEED)
-
     pos.i--
 }
-//}
 function shoot(pos) {
+    if (!gIsShoot) return
+    playSound('lazer')
     gShootInterval = setInterval(blinkLazer, 100, pos)
 }
-function playSound(sound) {
-    var sound = new Audio(`${sound}.mp3`);
-    sound.play();
-}
 function shootSuperAttack(pos) {
-    // console.log(gHero.isShoot);
+    if (!gIsShoot) return
+    playSound('super')
     if (gSuperAttackCount === 0) return
     gSuperAttackCount--
-    gSuperAttackInterval = setInterval(superAttack, 80, pos)
-    // document.querySelector('p1 span').innerHTML = gSuperAttackCount
+    gSuperAttackInterval = setInterval(superAttack, 20, pos)
 }
 function superAttack(pos) {
+    if (!gIsShoot) return
     if (pos.i <= 0) {
         clearInterval(gSuperAttackInterval)
         return
     }
     var laserPos = { i: pos.i - 1, j: pos.j }
-    if (gBoard[laserPos.i][laserPos.j].gameObject === ALIEN) {
-        gGame.alienCount--
-        if (gGame.alienCount === 0) {
-            isWin()
-            return
-        }
-        updateScore(10)
-        updateCell(laserPos)
+    if (gBoard[laserPos.i][laserPos.j].gameObject === BUNKER) {
+        clearInterval(gSuperAttackInterval)
+        return
+    } else if (gBoard[laserPos.i][laserPos.j].gameObject === ALIEN) {
+        handleAlienHit(laserPos)
         clearInterval(gSuperAttackInterval)
         return
     }
     updateCell(laserPos, SUPER_ATTACK)
+    gIsShoot = false
     setTimeout(() => {
-        updateCell(laserPos, '')
-        //console.log(laserPos);
+        gIsShoot = true
+        updateCell(laserPos)
     }, SUPER_ATTACK_SPEED)
     pos.i--
 }
-
 function blowUpNegs(pos) {
     var negsCount = 0
     for (var i = pos.i - 1; i <= pos.i + 1; i++) {
@@ -155,7 +154,7 @@ function blowUpNegs(pos) {
 
             if (currCell.gameObject === ALIEN) {
                 var alienPos = { i, j }
-                updateCell(alienPos, '')
+                updateCell(alienPos)
                 gGame.alienCount--
                 negsCount++
             }
@@ -163,26 +162,11 @@ function blowUpNegs(pos) {
     }
     updateScore(10 * negsCount)
 }
-
-function getEmptyPos() {
-    const emptyPoss = []
-    for (var i = 2; i < 5; i++) {
-        for (var j = 3; j < 11; j++) {
-            var cell = gBoard[i][j]
-            if (cell.gameObject !== ALIEN) {
-                emptyPoss.push({ i, j })
-            }
-        }
-    } if (emptyPos.length === 0) return null
-    const randIdx = getRandomInt(0, emptyPoss.length)
-    const emptyPos = emptyPoss[randIdx]
-    return emptyPos
+function getShield(pos) {
+    gIsHeroShield = true
+    setTimeout(() => {
+        updateCell(pos, HERO_SHIELD)
+        gIsHeroShield = false
+    }, 5000)
 }
 
-// addCandy()
-// function addCandy() {
-//     var pos = getEmptyPos()
-//     console.log(pos);
-//     if (!pos) return
-//     updateCell(pos, SPACE_CANDY)
-// }

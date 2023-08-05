@@ -3,65 +3,69 @@
 const BOARD_SIZE = 14
 const ALIEN_ROW_LENGTH = 8
 const ALIEN_ROW_COUNT = 3
-const LASER_SPEED = 80
+
 const SUPER_ATTACK_SPEED = 30
+
 const ALIEN = '👽'
 const LASER = '🔥'
 const HERO = '👸🏾'
 const SUPER_ATTACK = '⚡'
 const SPACE_CANDY = '🍕'
 const ROCK = '🌑'
-
+const HERO_SHIELD = '🤖'
+const BUNKER = '🌈'
 var EMPTY = ' '
 var SKY = 'SKY'
 var gBoard;
 
 var gCandyInterval;
 var gAlienPosInterval;
+
 const gGame = {
     isOn: false,
     score: 0,
-    alienCount:24
+    alienCount: 24,
+    // lives: 3
 }
 var sound = new Audio('ארתור - שיר פתיחה.mp3')
 
 function inIt() {
+    removeHidden('button')
 
-    document.querySelector('.modal').classList.remove('hidden')
-    document.querySelector('button').classList.remove('hidden')
-    document.querySelector('.win').classList.add('hidden')
-    //document.querySelector('p1').classList.add('hidden')
-
+    addHidden('.win')
+    addHidden('p')
+    //addHidden('p1')
 }
 function startGame() {
-    //sound.play()
-    gGame.isOn = true;
+    gIsShoot = true
     gIsBlowNegs = false;
-
-    gGame.score = 0
+    gIsHeroShield = false;
+    gGame.isOn = true;
+    gGame.score = 0;
+    // gGame.lives = 3;
     gSuperAttackCount = 3;
 
     gBoard = buildBoard()
-    console.log(gBoard)
     createAliens(gBoard)
     createHero(gBoard)
     renderBoard(gBoard)
-    console.log(gGame.alienCount);
-    //console.log(gAliens);
-    //gAliensInterval =  setInterval(moveAliens, 1000)
+    gIntervalAliens = setInterval(moveAliens, 3000, gBoard)
+    //gAlienPosInterval = setInterval(aliensRocks, 1000, getAlienPos(gBoard))
+    gCandyInterval = setInterval(addCandy, 10000, getEmptyPos(gBoard))
+    //aliensRocks()
+    addHidden('.modal')
+    addHidden('button')
+    addHidden('.win')
 
-    document.querySelector('.modal').classList.add('hidden')
-    document.querySelector('button').classList.add('hidden')
-    //document.querySelector('p1').classList.remove('hidden')
-    document.querySelector('p span').innerText = 0
-    document.querySelector('.win').classList.add('hidden')
-    //document.querySelector('button').innerText = 'Restart'
-    gAlienPosInterval = setInterval(getAlienPos, 2000)
-    moveAliens()
+    removeHidden('p')
+    //removeHidden('p1')
 
+    innerText('p span', 0)
+    innerText('button', 'Restart')
+    //innerText('p1 span', gGame.lives)
 }
 
-function buildBoard() {
+function buildBoard(board) {
     var board = []
     for (var i = 0; i < BOARD_SIZE; i++) {
         board.push([])
@@ -69,6 +73,9 @@ function buildBoard() {
             board[i][j] = createCell()
         }
     }
+    board[12][2].gameObject = BUNKER
+    board[12][10].gameObject = BUNKER
+
     return board
 }
 function renderBoard(board) {
@@ -78,7 +85,6 @@ function renderBoard(board) {
         for (var j = 0; j < board[i].length; j++) {
             const currCell = board[i][j]
 
-            //var cellClass = getClassName({ i: i, j: j })
             const className = `cell cell-${i}-${j}`
 
             strHTML += `<td class="cell ${className}"  onclick="moveTo(${i},${j})"data-i="${i}" data-j="${j}">\n`
@@ -87,6 +93,12 @@ function renderBoard(board) {
                 strHTML += HERO
             } if (currCell.gameObject === ALIEN) {
                 strHTML += ALIEN
+            } if (currCell.gameObject === BUNKER) {
+                strHTML += BUNKER
+            } if (currCell.gameObject === HERO_SHIELD) {
+                strHTML += HERO_SHIELD
+            } if (currCell.gameObject === ROCK) {
+                strHTML += ROCK
             } else if (currCell.gameObject === EMPTY) {
                 strHTML += EMPTY
             }
@@ -97,35 +109,66 @@ function renderBoard(board) {
     }
     const elBoard = document.querySelector('.board')
     elBoard.innerHTML = strHTML
-    //console.table(board)
 }
 
 function updateCell(pos, gameObject = null) {
-    // console.log(pos, gameObject);
     gBoard[pos.i][pos.j].gameObject = gameObject
-    console.log(gBoard[pos.i][pos.j]);
     var elCell = getElCell(pos)
-    console.log(elCell);
     elCell.innerHTML = gameObject || ''
 }
 
 function updateScore(diff) {
     gGame.score += diff
+    innerText('p span', gGame.score)
+}
 
-    document.querySelector('p span').innerText = gGame.score
+function getEmptyPos() {
+    const emptyPoss = []
+    for (var j = 0; j <= 13; j++) {
+        var cell = gBoard[13][j]
+        if (cell.gameObject !== HERO) {
+            emptyPoss.push({ i: 13, j: j })
+        }
+    } if (emptyPoss.length === 0) return null
+    const randIdx = getRandomInt(0, emptyPoss.length)
+    const emptyPos = emptyPoss[randIdx]
+    return emptyPos
+}
 
+function addCandy() {
+    var pos = getEmptyPos()
+    if (gBoard[pos.i][pos.j].gameObject === HERO) return
+    updateCell(pos, SPACE_CANDY)
+    setTimeout(() => {
+        updateCell(pos)
+    }, 5000)
 }
 function gameOver() {
-    sound.pause()
     gGame.isOn = false
-    document.querySelector('button').innerText = 'Restart'
-    document.querySelector('button').classList.remove('hidden')
-    //document.querySelector('p1').classList.add('hidden')
+    gIsShoot = false
+    gIsHeroShield = false
+    clearInterval(gCandyInterval)
+    innerText('button', 'Resrart')
+    removeHidden('button')
+    addHidden('p')
+    //addHidden('p1')
 }
 function isWin() {
-    sound.pause()
     gGame.isOn = false
-    document.querySelector('.win').classList.remove('hidden')
-    document.querySelector('button').innerText = 'Restart'
-    document.querySelector('button').classList.remove('hidden')
+    gIsShoot = false
+    gIsHeroShield = false
+    clearInterval(gCandyInterval)
+    removeHidden('.win')
+    removeHidden('button')
+    innerText('button', 'Resrart')
+}
+
+function addHidden(htmlName) {
+    document.querySelector(`${htmlName}`).classList.add('hidden')
+}
+function removeHidden(htmlName) {
+    document.querySelector(`${htmlName}`).classList.remove('hidden')
+}
+function innerText(htmlName, txt) {
+    document.querySelector(`${htmlName}`).innerText = txt
 }
