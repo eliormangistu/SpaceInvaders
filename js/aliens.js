@@ -114,9 +114,12 @@ function moveAliens(board) {
 
 function shiftBoardDown(board, fromI, alien) {
     if (fromI === board.length - 2) {
-        clearInterval(gIntervalAliens)
+        // clearInterval(gIntervalAliens)
         gameOver()
         return
+    }
+    if (gGame.alienCount === 0) {
+        isWin()
     }
     updateCell({ i: fromI, j: alien.j })
     var toI = {

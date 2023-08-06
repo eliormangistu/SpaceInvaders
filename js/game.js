@@ -27,7 +27,7 @@ const gGame = {
     alienCount: 24,
     // lives: 3
 }
-var sound = new Audio('ארתור - שיר פתיחה.mp3')
+//var sound = new Audio('ארתור - שיר פתיחה.mp3')
 
 function inIt() {
     removeHidden('button')
