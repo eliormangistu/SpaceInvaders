@@ -49,20 +49,20 @@ function startGame() {
     createAliens(gBoard)
     createHero(gBoard)
     renderBoard(gBoard)
-    gIntervalAliens = setInterval(moveAliens, 3000, gBoard)
-    //gAlienPosInterval = setInterval(aliensRocks, 1000, getAlienPos(gBoard))
-    gCandyInterval = setInterval(addCandy, 10000, getEmptyPos(gBoard))
     //aliensRocks()
     addHidden('.modal')
     addHidden('button')
     addHidden('.win')
-
+    
     removeHidden('p')
     //removeHidden('p1')
-
+    
     innerText('p span', 0)
     innerText('button', 'Restart')
+    gIntervalAliens = setInterval(moveAliens, 3000, gBoard)
+    gCandyInterval = setInterval(addCandy, 10000, getEmptyPos(gBoard))
     //innerText('p1 span', gGame.lives)
+    //gAlienPosInterval = setInterval(getAlienPos, 5000,gBoard)
 }
 
 function buildBoard(board) {
@@ -148,6 +148,7 @@ function gameOver() {
     gIsShoot = false
     gIsHeroShield = false
     clearInterval(gCandyInterval)
+    clearInterval(gIntervalAliens)
     innerText('button', 'Resrart')
     removeHidden('button')
     addHidden('p')
@@ -158,6 +159,7 @@ function isWin() {
     gIsShoot = false
     gIsHeroShield = false
     clearInterval(gCandyInterval)
+    clearInterval(gIntervalAliens)
     removeHidden('.win')
     removeHidden('button')
     innerText('button', 'Resrart')

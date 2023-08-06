@@ -29,6 +29,7 @@ function handleAlienHit(pos) {
     updateCell(pos)
     if (gGame.alienCount === 0) isWin()
 }
+
 // function getAlienPos() {
 //     const alienPoss = []
 //     for (var i = 0; i < gBoard.length; i++) {
