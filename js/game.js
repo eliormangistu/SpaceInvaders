@@ -42,6 +42,7 @@ function startGame() {
     gIsHeroShield = false;
     gGame.isOn = true;
     gGame.score = 0;
+    gGame.alienCount = 24
     // gGame.lives = 3;
     gSuperAttackCount = 3;
 
@@ -53,10 +54,10 @@ function startGame() {
     addHidden('.modal')
     addHidden('button')
     addHidden('.win')
-    
+
     removeHidden('p')
     //removeHidden('p1')
-    
+
     innerText('p span', 0)
     innerText('button', 'Restart')
     gIntervalAliens = setInterval(moveAliens, 3000, gBoard)
